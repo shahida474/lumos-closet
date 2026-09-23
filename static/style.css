@@ -1,0 +1,102 @@
+/* Lumos Closet -- dark teal + gold theme, drawn from the brand logo. */
+:root {
+  --bg: #0b2321;            /* deep teal, logo background */
+  --bg-soft: #0e2b28;
+  --card: #123330;          /* panel */
+  --text: #edf4f2;
+  --muted: #8fa9a3;
+  --border: #1e4a44;
+  --primary: #2fb37f;       /* leaf teal-green */
+  --primary-dark: #1d7a56;
+  --gold: #c9a35f;          /* branch gold */
+  --gold-soft: #e3c88f;
+  --ok: #35c08a;
+  --err: #e0705c;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", "Noto Sans Bengali", sans-serif;
+       background: var(--bg); color: var(--text); }
+.container { max-width: 960px; margin: 0 auto; padding: 1rem; }
+h1 { font-size: 1.5rem; } h2 { font-size: 1.2rem; margin-top: 2rem; color: var(--gold-soft); } h3 { font-size: 1.05rem; }
+a { color: var(--gold-soft); }
+
+.topbar { display: flex; justify-content: space-between; align-items: center;
+          background: #081b1a; color: #fff; padding: .6rem 1rem;
+          border-bottom: 2px solid var(--gold); }
+.brand { display: flex; align-items: center; gap: .7rem; }
+.brand-logo { width: 46px; height: 46px; border-radius: 50%; border: 2px solid var(--gold); object-fit: cover; }
+.brand-name { font-weight: 700; font-size: 1.25rem; color: #fff; }
+.brand-tag { opacity: .75; margin-left: .5rem; font-size: .9rem; color: var(--gold-soft); }
+.lang-toggle a { color: #fff; text-decoration: none; padding: .3rem .6rem;
+                 border: 1px solid rgba(255,255,255,.4); border-radius: 4px; margin-left: .3rem; }
+.lang-toggle a.active { background: var(--gold); border-color: var(--gold); color: #081b1a; font-weight: 700; }
+
+.mainnav { display: flex; flex-wrap: wrap; gap: .2rem; background: var(--bg-soft);
+           padding: .4rem 1rem; border-bottom: 1px solid var(--border); }
+.mainnav a { color: var(--text); text-decoration: none; padding: .4rem .8rem; border-radius: 4px; }
+.mainnav a:hover { background: rgba(47,179,127,.18); }
+.mainnav a.right { margin-left: auto; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+.stat .stat-label { color: var(--muted); font-size: .9rem; }
+.stat .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
+
+table { width: 100%; border-collapse: collapse; background: var(--card);
+        border-radius: 8px; overflow: hidden; margin: .5rem 0 1.5rem; }
+th, td { padding: .6rem .8rem; border-bottom: 1px solid var(--border); text-align: left; }
+th { background: #0d2926; color: var(--gold-soft); }
+tr.lowrow td { background: rgba(224,112,92,.12); }
+tr.total-row td { background: #0d2926; }
+
+.badge { display: inline-block; padding: .2rem .6rem; border-radius: 999px;
+         font-size: .85rem; color: #081b1a; font-weight: 600; }
+.badge.pending { background: var(--gold); } .badge.confirmed { background: #7ab8f5; }
+.badge.shipped { background: var(--primary); } .badge.delivered { background: var(--ok); }
+.badge.cancelled { background: var(--err); color: #fff; }
+
+.btn { display: inline-block; padding: .55rem 1.1rem; border-radius: 6px; border: 1px solid var(--border);
+       background: var(--card); color: var(--text); text-decoration: none; cursor: pointer; font-size: 1rem; }
+.btn.primary { background: var(--primary); border-color: var(--primary); color: #06231a; font-weight: 700; }
+.btn.danger { background: var(--err); border-color: var(--err); color: #fff; }
+.btn.small { padding: .35rem .7rem; font-size: .9rem; }
+
+.form label { display: block; margin: .8rem 0; font-weight: 600; }
+.form input, .form select, .form textarea {
+  display: block; width: 100%; margin-top: .3rem; padding: .55rem;
+  border: 1px solid var(--border); border-radius: 6px; font-size: 1rem;
+  background: var(--bg-soft); color: var(--text); }
+.form input:focus, .form select:focus, .form textarea:focus { outline: none; border-color: var(--primary); }
+.form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-actions { margin-top: 1rem; display: flex; gap: .6rem; }
+.inline { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.inline-form { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; }
+.inline-form label { margin: 0; }
+.small-input { width: 5rem; padding: .4rem; border: 1px solid var(--border); border-radius: 6px;
+               background: var(--bg-soft); color: var(--text); }
+.muted { color: var(--muted); }
+.ok-text { color: var(--ok); font-weight: 600; }
+
+.flashes { margin: 1rem 0; }
+.flash { padding: .7rem 1rem; border-radius: 6px; margin-bottom: .5rem; }
+.flash.ok { background: rgba(53,192,138,.15); color: var(--ok); border: 1px solid var(--ok); }
+.flash.error { background: rgba(224,112,92,.15); color: var(--err); border: 1px solid var(--err); }
+
+.login-card { max-width: 380px; margin: 3rem auto; background: var(--card);
+              border: 1px solid var(--gold); border-radius: 10px; padding: 2rem; text-align: center; }
+.login-logo { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--gold);
+              object-fit: cover; margin-bottom: .5rem; }
+.login-card h1 { margin-top: .5rem; color: var(--gold-soft); }
+.login-card form { text-align: left; }
+.login-card .btn { width: 100%; margin-top: .5rem; }
+
+.tabs { display: flex; gap: .5rem; margin: 1rem 0; }
+.tabs a { padding: .5rem 1rem; border: 1px solid var(--border); border-radius: 6px;
+          text-decoration: none; color: var(--text); background: var(--card); }
+.tabs a.active { background: var(--primary); color: #06231a; border-color: var(--primary); font-weight: 700; }
+
+@media (max-width: 640px) {
+  table { font-size: .9rem; }
+  th, td { padding: .45rem .5rem; }
+  .form .row { grid-template-columns: 1fr; }
+}
