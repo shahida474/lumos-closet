@@ -108,7 +108,7 @@ STRINGS = {
         "all_orders": "সব অর্ডার",
         "no_orders": "এখনও কোনো অর্ডার নেই।",
         "language": "ভাষা",
-        "business_name": "লুমোস ক্লোজেট",
+        "business_name": "Lumos Closet",
         "phone_hint": "ফোন নম্বর ১১ সংখ্যার হতে হবে (যেমন 01712345678)।",
         "invalid_phone": "ফোন নম্বর ঠিক ১১ সংখ্যার হতে হবে।",
         "name_address_required": "নাম, ফোন ও ঠিকানা আবশ্যক।",
