@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ t('reports') }}</h1>
+<div class="tabs">
+  <a href="{{ url_for('reports', view='daily') }}" class="{% if view=='daily' %}active{% endif %}">{{ t('daily_report') }}</a>
+  <a href="{{ url_for('reports', view='monthly') }}" class="{% if view=='monthly' %}active{% endif %}">{{ t('monthly_report') }}</a>
+</div>
+
+<form method="get" class="inline">
+  <input type="hidden" name="view" value="{{ view }}">
+  {% if view == 'daily' %}
+  <label>{{ t('date') }} <input type="date" name="date" value="{{ label }}"></label>
+  {% else %}
+  <label>{{ t('month') }} <input type="month" name="month" value="{{ label }}"></label>
+  {% endif %}
+  <button type="submit" class="btn small">{{ t('view') }}</button>
+</form>
+
+<p class="muted">{{ label }}</p>
+
+<div class="cards">
+  <div class="card stat">
+    <div class="stat-label">{{ t('total_sales') }}</div>
+    <div class="stat-value">{{ taka(sales['s']) }}</div>
+  </div>
+  <div class="card stat">
+    <div class="stat-label">{{ t('num_orders') }}</div>
+    <div class="stat-value">{{ sales['c'] }}</div>
+  </div>
+  <div class="card stat">
+    <div class="stat-label">{{ t('inventory_value') }}</div>
+    <div class="stat-value">{{ taka(inv_value) }}</div>
+  </div>
+</div>
+
+<h2>{{ t('sales_by_payment') }}</h2>
+{% if by_pay %}
+<table>
+  <tr><th>{{ t('payment_method') }}</th><th>{{ t('num_orders') }}</th><th>{{ t('total_sales') }}</th></tr>
+  {% for row in by_pay %}
+  <tr><td>{{ t(row['payment_method']) }}</td><td>{{ row['c'] }}</td><td>{{ taka(row['s']) }}</td></tr>
+  {% endfor %}
+</table>
+{% else %}
+<p class="muted">{{ t('no_orders_period') }}</p>
+{% endif %}
+
+<h2>{{ t('orders') }}</h2>
+{% if orders %}
+<table>
+  <tr><th>{{ t('invoice_no') }}</th><th>{{ t('customer') }}</th><th>{{ t('total') }}</th><th>{{ t('status') }}</th></tr>
+  {% for o in orders %}
+  <tr>
+    <td><a href="{{ url_for('order_detail', order_id=o['id']) }}">{{ o['invoice_no'] }}</a></td>
+    <td>{{ o['customer_name'] }}</td>
+    <td>{{ taka(o['total']) }}</td>
+    <td><span class="badge {{ o['status'] }}">{{ t(o['status']) }}</span></td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p class="muted">{{ t('no_orders_period') }}</p>
+{% endif %}
+{% endblock %}

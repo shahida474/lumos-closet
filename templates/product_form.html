@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ t('add_product') }}</h1>
+<form method="post" class="form">
+  <label>{{ t('product_name') }} <input name="name" required></label>
+  <label>{{ t('category') }} <input name="category" placeholder="Kurti / Saree / …"></label>
+  <label>{{ t('price_taka') }} <input name="price" type="number" min="0" value="0" required></label>
+  <label>{{ t('low_stock_threshold') }} <input name="threshold" type="number" min="0" value="5"></label>
+  <div class="form-actions">
+    <button type="submit" class="btn primary">{{ t('save') }}</button>
+    <a class="btn" href="{{ url_for('products') }}">{{ t('back') }}</a>
+  </div>
+</form>
+{% endblock %}

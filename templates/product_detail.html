@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ product['name'] }}</h1>
+<p class="muted">{{ product['category'] or '—' }} · {{ taka(product['price']) }}</p>
+
+<h2>{{ t('stock') }}</h2>
+{% if variants %}
+<table>
+  <tr><th>{{ t('size') }}</th><th>{{ t('color') }}</th><th>{{ t('stock') }}</th><th>{{ t('update_stock') }}</th></tr>
+  {% for v in variants %}
+  <tr {% if v['stock'] <= product['low_stock_threshold'] %}class="lowrow"{% endif %}>
+    <td>{{ v['size'] or '—' }}</td>
+    <td>{{ v['color'] or '—' }}</td>
+    <td>{{ v['stock'] }}</td>
+    <td>
+      <form method="post" action="{{ url_for('variant_stock', variant_id=v['id']) }}" class="inline">
+        <input name="stock" type="number" min="0" value="{{ v['stock'] }}" class="small-input">
+        <button type="submit" class="btn small">{{ t('update_stock') }}</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p class="muted">{{ t('no_variants') }}</p>
+{% endif %}
+
+<h3>{{ t('add_variant') }}</h3>
+<form method="post" action="{{ url_for('variant_add', product_id=product['id']) }}" class="form inline-form">
+  <label>{{ t('size') }} <input name="size" placeholder="M"></label>
+  <label>{{ t('color') }} <input name="color" placeholder="Red"></label>
+  <label>{{ t('stock') }} <input name="stock" type="number" min="0" value="0"></label>
+  <button type="submit" class="btn primary">{{ t('add_variant') }}</button>
+</form>
+
+<hr>
+<form method="post" action="{{ url_for('product_delete', product_id=product['id']) }}"
+      onsubmit="return confirm('{{ t('confirm_delete_product') }}')">
+  <button type="submit" class="btn danger">{{ t('delete') }}</button>
+  <a class="btn" href="{{ url_for('products') }}">{{ t('back') }}</a>
+</form>
+{% endblock %}

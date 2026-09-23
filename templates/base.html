@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="{{ 'bn' if lang == 'bn' else 'en' }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ t('app_name') }} — {{ t('tagline') }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="icon" href="{{ url_for('static', filename='logo.jpg') }}">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <img class="brand-logo" src="{{ url_for('static', filename='logo.jpg') }}" alt="Lumos Closet">
+    <span class="brand-name">{{ t('business_name') }}</span>
+    <span class="brand-tag">{{ t('tagline') }}</span>
+  </div>
+  <div class="lang-toggle">
+    <a href="{{ url_for('set_lang', code='bn', next=request.path) }}" class="{% if lang=='bn' %}active{% endif %}">বাংলা</a>
+    <a href="{{ url_for('set_lang', code='en', next=request.path) }}" class="{% if lang=='en' %}active{% endif %}">English</a>
+  </div>
+</header>
+{% if session.get('logged_in') %}
+<nav class="mainnav">
+  <a href="{{ url_for('dashboard') }}">{{ t('dashboard') }}</a>
+  <a href="{{ url_for('products') }}">{{ t('products') }}</a>
+  <a href="{{ url_for('orders') }}">{{ t('orders') }}</a>
+  <a href="{{ url_for('reports') }}">{{ t('reports') }}</a>
+  <a href="{{ url_for('settings') }}">{{ t('settings') }}</a>
+  <a href="{{ url_for('logout') }}" class="right">{{ t('logout') }}</a>
+</nav>
+{% endif %}
+<main class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flashes">
+      {% for cat, msg in messages %}
+        <div class="flash {{ cat }}">{{ msg }}</div>
+      {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

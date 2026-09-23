@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ t('dashboard') }}</h1>
+<div class="cards">
+  <div class="card stat">
+    <div class="stat-label">{{ t('todays_sales') }}</div>
+    <div class="stat-value">{{ taka(sales) }}</div>
+  </div>
+  <div class="card stat">
+    <div class="stat-label">{{ t('pending_orders') }}</div>
+    <div class="stat-value">{{ pending }}</div>
+  </div>
+  <div class="card stat">
+    <div class="stat-label">{{ t('low_stock_items') }}</div>
+    <div class="stat-value">{{ low|length }}</div>
+  </div>
+</div>
+
+<h2>{{ t('low_stock_items') }}</h2>
+{% if low %}
+<table>
+  <tr><th>{{ t('product_name') }}</th><th>{{ t('size') }} / {{ t('color') }}</th><th>{{ t('stock') }}</th></tr>
+  {% for v in low %}
+  <tr class="lowrow">
+    <td>{{ v['name'] }}</td>
+    <td>{{ vlabel(v) }}</td>
+    <td>{{ v['stock'] }} <small>(≤ {{ v['low_stock_threshold'] }})</small></td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p class="muted">{{ t('no_low_stock') }}</p>
+{% endif %}
+
+<h2>{{ t('orders') }}</h2>
+{% if recent %}
+<table>
+  <tr><th>{{ t('invoice_no') }}</th><th>{{ t('customer') }}</th><th>{{ t('total') }}</th><th>{{ t('status') }}</th></tr>
+  {% for o in recent %}
+  <tr>
+    <td><a href="{{ url_for('order_detail', order_id=o['id']) }}">{{ o['invoice_no'] }}</a></td>
+    <td>{{ o['customer_name'] }}</td>
+    <td>{{ taka(o['total']) }}</td>
+    <td><span class="badge {{ o['status'] }}">{{ t(o['status']) }}</span></td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p class="muted">{{ t('no_orders') }}</p>
+{% endif %}
+{% endblock %}

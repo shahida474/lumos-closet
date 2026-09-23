@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ t('order_details') }} — {{ order['invoice_no'] }}</h1>
+<p><a class="btn" href="{{ url_for('invoice', order_id=order['id']) }}" target="_blank">🖨 {{ t('invoice') }} / {{ t('print') }}</a></p>
+
+<div class="cards">
+  <div class="card">
+    <div class="stat-label">{{ t('customer') }}</div>
+    <p><strong>{{ order['customer_name'] }}</strong><br>{{ order['phone'] }}<br>{{ order['address'] }}</p>
+    {% if order['note'] %}<p class="muted">{{ t('note') }}: {{ order['note'] }}</p>{% endif %}
+  </div>
+  <div class="card">
+    <div class="stat-label">{{ t('status') }}</div>
+    <p><span class="badge {{ order['status'] }}">{{ t(order['status']) }}</span></p>
+    <form method="post" action="{{ url_for('order_status', order_id=order['id']) }}" class="inline">
+      <select name="status">
+        {% for s in statuses %}<option value="{{ s }}" {% if s==order['status'] %}selected{% endif %}>{{ t(s) }}</option>{% endfor %}
+      </select>
+      <button type="submit" class="btn small">{{ t('change_status') }}</button>
+    </form>
+  </div>
+  <div class="card">
+    <div class="stat-label">{{ t('payment_method') }}</div>
+    <p>{{ t(order['payment_method']) }} · {{ t(order['payment_status']) }}</p>
+    <form method="post" action="{{ url_for('order_paystatus', order_id=order['id']) }}" class="inline">
+      <select name="payment_status">
+        {% for s in pay_statuses %}<option value="{{ s }}" {% if s==order['payment_status'] %}selected{% endif %}>{{ t(s) }}</option>{% endfor %}
+      </select>
+      <button type="submit" class="btn small">{{ t('save') }}</button>
+    </form>
+  </div>
+  <div class="card">
+    <div class="stat-label">{{ t('steadfast') }}</div>
+    {% if order['steadfast_tracking_code'] %}
+      <p><strong>{{ t('tracking_code') }}:</strong> {{ order['steadfast_tracking_code'] }}</p>
+      <form method="post" action="{{ url_for('order_steadfast_status', order_id=order['id']) }}" class="inline">
+        <button type="submit" class="btn small">{{ t('check_delivery_status') }}</button>
+      </form>
+    {% else %}
+      <form method="post" action="{{ url_for('order_steadfast', order_id=order['id']) }}">
+        <button type="submit" class="btn primary small">📦 {{ t('send_to_steadfast') }}</button>
+      </form>
+    {% endif %}
+  </div>
+</div>
+
+<h2>{{ t('items') }}</h2>
+<table>
+  <tr><th>{{ t('product_name') }}</th><th>{{ t('size') }}/{{ t('color') }}</th>
+      <th>{{ t('qty') }}</th><th>{{ t('unit_price') }}</th><th>{{ t('total') }}</th></tr>
+  {% for it in items %}
+  <tr>
+    <td>{{ it['product_name'] }}</td>
+    <td>{{ it['variant_label'] or '—' }}</td>
+    <td>{{ it['qty'] }}</td>
+    <td>{{ taka(it['unit_price']) }}</td>
+    <td>{{ taka(it['qty'] * it['unit_price']) }}</td>
+  </tr>
+  {% endfor %}
+  <tr class="total-row"><td colspan="4"><strong>{{ t('total') }}</strong></td><td><strong>{{ taka(order['total']) }}</strong></td></tr>
+</table>
+<p class="muted">{{ t('created') }}: {{ order['created_at'] }}</p>
+{% endblock %}

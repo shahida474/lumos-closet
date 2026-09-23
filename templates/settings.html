@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ t('settings') }}</h1>
+
+<h2>{{ t('steadfast') }}</h2>
+{% if api_key_set and secret_set %}
+<p class="ok-text">✓ {{ t('keys_set') }}</p>
+{% else %}
+<p class="muted">{{ t('keys_not_set') }}</p>
+{% endif %}
+<p class="muted">Steadfast merchant panel → API settings. {% if lang=='bn' %}কীগুলো শুধু সার্ভারে সংরক্ষিত থাকে, ব্রাউজারে কখনও দেখানো হয় না।{% else %}Keys are stored server-side only and never shown to the browser.{% endif %}</p>
+
+<form method="post" class="form">
+  <label>{{ t('api_key') }} <input type="password" name="api_key" autocomplete="off"
+      placeholder="{% if api_key_set %}••••••••{% endif %}"></label>
+  <label>{{ t('secret_key') }} <input type="password" name="secret" autocomplete="off"
+      placeholder="{% if secret_set %}••••••••{% endif %}"></label>
+  <div class="form-actions">
+    <button type="submit" class="btn primary">{{ t('save_keys') }}</button>
+  </div>
+</form>
+{% endblock %}

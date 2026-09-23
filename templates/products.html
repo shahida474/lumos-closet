@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ t('products') }}</h1>
+<p><a class="btn primary" href="{{ url_for('product_new') }}">+ {{ t('add_product') }}</a></p>
+{% if products %}
+<table>
+  <tr><th>{{ t('product_name') }}</th><th>{{ t('category') }}</th><th>{{ t('price_taka') }}</th><th>{{ t('stock') }}</th><th></th></tr>
+  {% for p in products %}
+  <tr>
+    <td><a href="{{ url_for('product_detail', product_id=p['id']) }}">{{ p['name'] }}</a></td>
+    <td>{{ p['category'] or '—' }}</td>
+    <td>{{ taka(p['price']) }}</td>
+    <td>{{ stock[p['id']] }}</td>
+    <td><a href="{{ url_for('product_detail', product_id=p['id']) }}">{{ t('actions') }} →</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p class="muted">{{ t('no_products') }}</p>
+{% endif %}
+{% endblock %}

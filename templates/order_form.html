@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ t('new_order') }}</h1>
+<form method="post" class="form">
+  <label>{{ t('customer_name') }} <input name="customer_name" required></label>
+  <label>{{ t('phone') }} <input name="phone" inputmode="numeric" required>
+    <small class="muted">{{ t('phone_hint') }}</small></label>
+  <label>{{ t('address') }} <textarea name="address" rows="2" required></textarea></label>
+  <div class="row">
+    <label>{{ t('payment_method') }}
+      <select name="payment_method">
+        {% for m in pay_methods %}<option value="{{ m }}">{{ t(m) }}</option>{% endfor %}
+      </select></label>
+    <label>{{ t('payment_status') }}
+      <select name="payment_status">
+        {% for s in pay_statuses %}<option value="{{ s }}">{{ t(s) }}</option>{% endfor %}
+      </select></label>
+  </div>
+  <label>{{ t('note') }} <input name="note"></label>
+
+  <h3>{{ t('select_items') }}</h3>
+  {% if variants %}
+  <table>
+    <tr><th>{{ t('product_name') }}</th><th>{{ t('size') }}/{{ t('color') }}</th>
+        <th>{{ t('unit_price') }}</th><th>{{ t('stock') }}</th><th>{{ t('qty') }}</th></tr>
+    {% for v in variants %}
+    <tr>
+      <td>{{ v['name'] }}</td>
+      <td>{{ vlabel(v) }}</td>
+      <td>{{ taka(v['price']) }}</td>
+      <td>{{ v['stock'] }}</td>
+      <td><input name="qty_{{ v['id'] }}" type="number" min="0" max="{{ v['stock'] }}" value="0" class="small-input"></td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p class="muted">{{ t('no_variants') }}</p>
+  {% endif %}
+
+  <div class="form-actions">
+    <button type="submit" class="btn primary">{{ t('create_order') }}</button>
+    <a class="btn" href="{{ url_for('orders') }}">{{ t('back') }}</a>
+  </div>
+</form>
+{% endblock %}

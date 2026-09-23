@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="{{ 'bn' if lang == 'bn' else 'en' }}">
+<head>
+<meta charset="utf-8">
+<title>{{ t('invoice') }} {{ order['invoice_no'] }} — {{ t('business_name') }}</title>
+<style>
+  body { font-family: sans-serif; color: #111; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+  .inv-head { display: flex; justify-content: space-between; align-items: center;
+               border-bottom: 3px solid #0b2321; padding-bottom: .5rem; }
+  .inv-brand { display: flex; align-items: center; gap: .9rem; }
+  .inv-brand img { height: 72px; width: 72px; border-radius: 50%; object-fit: cover; }
+  .inv-brand h1 { color: #0b2321; }
+  .inv-head h1 { margin: 0; font-size: 1.8rem; }
+  .inv-meta { text-align: right; color: #444; }
+  table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+  th, td { border: 1px solid #999; padding: .5rem .7rem; text-align: left; }
+  th { background: #f0f0f0; }
+  .total-row td { font-size: 1.2rem; }
+  .paybox { margin-top: 1.5rem; }
+  .thanks { margin-top: 2rem; text-align: center; color: #444; }
+  .toolbar { margin-bottom: 1.5rem; }
+  .btn { display: inline-block; padding: .6rem 1.2rem; background: #2fb37f; color: #06231a; font-weight: 700;
+         border-radius: 6px; text-decoration: none; border: 0; cursor: pointer; font-size: 1rem; }
+  @media print {
+    .toolbar { display: none; }
+    body { margin: 0; max-width: none; }
+  }
+</style>
+</head>
+<body>
+<div class="toolbar no-print">
+  <button class="btn" onclick="window.print()">🖨 {{ t('print') }}</button>
+</div>
+<div class="inv-head">
+  <div class="inv-brand">
+    <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Lumos Closet">
+    <h1>{{ t('business_name') }}</h1>
+  </div>
+  <div class="inv-meta">
+    <div><strong>{{ t('invoice') }}</strong></div>
+    <div>{{ t('invoice_no') }}: {{ order['invoice_no'] }}</div>
+    <div>{{ order['created_at'] }}</div>
+  </div>
+</div>
+
+<h3>{{ t('billed_to') }}</h3>
+<p><strong>{{ order['customer_name'] }}</strong><br>
+{{ order['phone'] }}<br>{{ order['address'] }}</p>
+
+<table>
+  <tr><th>#</th><th>{{ t('product_name') }}</th><th>{{ t('size') }}/{{ t('color') }}</th>
+      <th>{{ t('qty') }}</th><th>{{ t('unit_price') }}</th><th>{{ t('total') }}</th></tr>
+  {% for it in items %}
+  <tr>
+    <td>{{ loop.index }}</td>
+    <td>{{ it['product_name'] }}</td>
+    <td>{{ it['variant_label'] or '—' }}</td>
+    <td>{{ it['qty'] }}</td>
+    <td>{{ taka(it['unit_price']) }}</td>
+    <td>{{ taka(it['qty'] * it['unit_price']) }}</td>
+  </tr>
+  {% endfor %}
+  <tr class="total-row"><td colspan="5"><strong>{{ t('total') }}</strong></td><td><strong>{{ taka(order['total']) }}</strong></td></tr>
+</table>
+
+<div class="paybox">
+  <p><strong>{{ t('payment_method') }}:</strong> {{ t(order['payment_method']) }}<br>
+     <strong>{{ t('payment_status') }}:</strong> {{ t(order['payment_status']) }}</p>
+  {% if order['steadfast_tracking_code'] %}
+  <p><strong>{{ t('tracking_code') }}:</strong> {{ order['steadfast_tracking_code'] }}</p>
+  {% endif %}
+</div>
+
+<p class="thanks">{{ t('thank_you') }}</p>
+</body>
+</html>
