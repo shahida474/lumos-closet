@@ -60,6 +60,10 @@
     <td>{{ taka(it['qty'] * it['unit_price']) }}</td>
   </tr>
   {% endfor %}
+  {% if order['discount_type'] %}
+  <tr><td colspan="5">{{ t('subtotal') }}</td><td>{{ taka(order['subtotal']) }}</td></tr>
+  <tr><td colspan="5">{{ t('discount') }}{% if order['discount_type'] == 'percent' %} ({{ order['discount_value'] }}%){% endif %}</td><td>-{{ taka(order['subtotal'] - order['total']) }}</td></tr>
+  {% endif %}
   <tr class="total-row"><td colspan="5"><strong>{{ t('total') }}</strong></td><td><strong>{{ taka(order['total']) }}</strong></td></tr>
 </table>
 

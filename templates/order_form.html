@@ -17,6 +17,16 @@
       </select></label>
   </div>
   <label>{{ t('note') }} <input name="note"></label>
+  <div class="row">
+    <label>{{ t('discount') }}
+      <select name="discount_type">
+        <option value="none">{{ t('no_discount') }}</option>
+        <option value="flat">{{ t('discount_flat') }}</option>
+        <option value="percent">{{ t('discount_percent') }}</option>
+      </select></label>
+    <label>{{ t('discount_value') }}
+      <input name="discount_value" type="number" min="0" value="0" class="small-input"></label>
+  </div>
 
   <h3>{{ t('select_items') }}</h3>
   {% if variants %}
