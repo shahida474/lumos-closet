@@ -369,6 +369,12 @@ def order_new():
         if disc_type == "" or disc_value == 0:
             disc_type, disc_value = "", 0
 
+        # Delivery fee (e.g. Steadfast's location-based charge), added on top.
+        try:
+            delivery_fee = max(0, int(request.form.get("delivery_fee", "0") or 0))
+        except ValueError:
+            delivery_fee = 0
+
         # Collect chosen items: form fields look like qty_<variant_id>.
         chosen = []
         for v in variants:
@@ -395,7 +401,7 @@ def order_new():
             disc_amount = subtotal * disc_value // 100
         else:
             disc_amount = 0
-        total = subtotal - disc_amount
+        total = subtotal - disc_amount + delivery_fee
         invoice_no = next_invoice_no()
 
         conn = db.get_db()
@@ -403,10 +409,11 @@ def order_new():
             cur = conn.execute(
                 """INSERT INTO orders (invoice_no, customer_name, phone, address,
                                       payment_method, payment_status, total,
-                                      subtotal, discount_type, discount_value, note)
-                   VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+                                      subtotal, discount_type, discount_value,
+                                      delivery_fee, note)
+                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",
                 (invoice_no, name, phone, address, pay_method, pay_status, total,
-                 subtotal, disc_type, disc_value, note))
+                 subtotal, disc_type, disc_value, delivery_fee, note))
             order_id = cur.lastrowid
             for v, qty in chosen:
                 conn.execute(

@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS orders (
     subtotal                INTEGER NOT NULL DEFAULT 0,       -- pre-discount total in whole BDT
     discount_type           TEXT NOT NULL DEFAULT '',         -- ''|flat|percent ('' = no discount)
     discount_value          INTEGER NOT NULL DEFAULT 0,       -- taka for flat, 0-100 for percent
+    delivery_fee            INTEGER NOT NULL DEFAULT 0,       -- courier charge in whole BDT
     note                    TEXT NOT NULL DEFAULT '',
     steadfast_tracking_code TEXT NOT NULL DEFAULT '',
     steadfast_consignment_id INTEGER,
@@ -98,6 +99,7 @@ def _migrate(conn):
         ("subtotal", "INTEGER NOT NULL DEFAULT 0"),
         ("discount_type", "TEXT NOT NULL DEFAULT ''"),
         ("discount_value", "INTEGER NOT NULL DEFAULT 0"),
+        ("delivery_fee", "INTEGER NOT NULL DEFAULT 0"),
     ):
         if name not in cols:
             conn.execute(f"ALTER TABLE orders ADD COLUMN {name} {ddl}")
