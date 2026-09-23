@@ -356,6 +356,19 @@ def order_new():
         if pay_status not in PAY_STATUSES:
             pay_status = "unpaid"
 
+        # Discount: none | flat taka amount | percent (0-100).
+        disc_type = request.form.get("discount_type", "none")
+        if disc_type not in ("flat", "percent"):
+            disc_type = ""
+        try:
+            disc_value = max(0, int(request.form.get("discount_value", "0") or 0))
+        except ValueError:
+            disc_value = 0
+        if disc_type == "percent":
+            disc_value = min(disc_value, 100)
+        if disc_type == "" or disc_value == 0:
+            disc_type, disc_value = "", 0
+
         # Collect chosen items: form fields look like qty_<variant_id>.
         chosen = []
         for v in variants:
@@ -375,16 +388,25 @@ def order_new():
                 flash(f"{t('not_enough_stock')}: {v['name']} ({variant_label(v)})", "error")
                 return render_template("order_form.html", variants=variants, vlabel=variant_label)
 
-        total = sum(v["price"] * qty for v, qty in chosen)
+        subtotal = sum(v["price"] * qty for v, qty in chosen)
+        if disc_type == "flat":
+            disc_amount = min(disc_value, subtotal)
+        elif disc_type == "percent":
+            disc_amount = subtotal * disc_value // 100
+        else:
+            disc_amount = 0
+        total = subtotal - disc_amount
         invoice_no = next_invoice_no()
 
         conn = db.get_db()
         try:
             cur = conn.execute(
                 """INSERT INTO orders (invoice_no, customer_name, phone, address,
-                                      payment_method, payment_status, total, note)
-                   VALUES (?,?,?,?,?,?,?,?)""",
-                (invoice_no, name, phone, address, pay_method, pay_status, total, note))
+                                      payment_method, payment_status, total,
+                                      subtotal, discount_type, discount_value, note)
+                   VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+                (invoice_no, name, phone, address, pay_method, pay_status, total,
+                 subtotal, disc_type, disc_value, note))
             order_id = cur.lastrowid
             for v, qty in chosen:
                 conn.execute(

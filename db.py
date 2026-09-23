@@ -44,6 +44,9 @@ CREATE TABLE IF NOT EXISTS orders (
     payment_method          TEXT NOT NULL DEFAULT 'cod',      -- cod|bkash|nagad|rocket|card
     payment_status          TEXT NOT NULL DEFAULT 'unpaid',   -- paid|unpaid
     total                   INTEGER NOT NULL DEFAULT 0,       -- total in whole BDT
+    subtotal                INTEGER NOT NULL DEFAULT 0,       -- pre-discount total in whole BDT
+    discount_type           TEXT NOT NULL DEFAULT '',         -- ''|flat|percent ('' = no discount)
+    discount_value          INTEGER NOT NULL DEFAULT 0,       -- taka for flat, 0-100 for percent
     note                    TEXT NOT NULL DEFAULT '',
     steadfast_tracking_code TEXT NOT NULL DEFAULT '',
     steadfast_consignment_id INTEGER,
@@ -79,8 +82,31 @@ def init_db():
     try:
         conn.executescript(SCHEMA)
         conn.commit()
+        _migrate(conn)
     finally:
         conn.close()
+
+
+def _migrate(conn):
+    """Add columns that newer versions of the app expect.
+
+    Keeps databases created by older versions working without any
+    manual step -- each missing column is added once and left alone.
+    """
+    cols = {r["name"] for r in conn.execute("PRAGMA table_info(orders)")}
+    for name, ddl in (
+        ("subtotal", "INTEGER NOT NULL DEFAULT 0"),
+        ("discount_type", "TEXT NOT NULL DEFAULT ''"),
+        ("discount_value", "INTEGER NOT NULL DEFAULT 0"),
+    ):
+        if name not in cols:
+            conn.execute(f"ALTER TABLE orders ADD COLUMN {name} {ddl}")
+    # Orders written before discounts existed: subtotal equals total.
+    conn.execute(
+        "UPDATE orders SET subtotal = total "
+        "WHERE discount_type = '' AND subtotal = 0"
+    )
+    conn.commit()
 
 
 def get_setting(key, default=""):
